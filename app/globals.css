@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #18181b;
 }
 
 @theme inline {
@@ -10,17 +10,30 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Azul elegante — único color de acento de la paleta */
+  --color-accent-50: #eef1ff;
+  --color-accent-100: #e0e4ff;
+  --color-accent-200: #c6ccfb;
+  --color-accent-300: #a3abf5;
+  --color-accent-400: #7d84ec;
+  --color-accent-500: #5b5fe0;
+  --color-accent-600: #4a4bc9;
+  --color-accent-700: #3d3ba3;
+  --color-accent-800: #2e2d78;
+  --color-accent-900: #201f56;
+
+  --shadow-soft: 0 1px 2px 0 rgb(24 24 27 / 0.04), 0 2px 8px -2px rgb(24 24 27 / 0.06);
+  --shadow-soft-md: 0 2px 4px -1px rgb(24 24 27 / 0.04), 0 8px 24px -4px rgb(24 24 27 / 0.08);
+  --shadow-soft-lg: 0 4px 8px -2px rgb(24 24 27 / 0.06), 0 16px 40px -8px rgb(24 24 27 / 0.12);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 transparent;
 }
