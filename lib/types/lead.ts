@@ -13,4 +13,6 @@ export interface Lead {
   nextAction: string;
   createdAt: string;
   isNew?: boolean;
+  /** Valor potencial del tratamiento en €, usado en las cifras de ingresos del panel. */
+  estimatedValue: number;
 }

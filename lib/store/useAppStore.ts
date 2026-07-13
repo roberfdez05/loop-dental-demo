@@ -6,11 +6,14 @@ import {
   type ConversationsSlice,
 } from "@/lib/store/slices/conversationsSlice";
 import { createLeadsSlice, type LeadsSlice } from "@/lib/store/slices/leadsSlice";
+import { createPatientsSlice, type PatientsSlice } from "@/lib/store/slices/patientsSlice";
 import { SEED_CONVERSATIONS } from "@/lib/data/seed-conversations";
 import { SEED_LEADS } from "@/lib/data/seed-leads";
+import { SEED_INACTIVE_PATIENTS } from "@/lib/data/seed-inactive-patients";
 
 export type AppState = ConversationsSlice &
-  LeadsSlice & {
+  LeadsSlice &
+  PatientsSlice & {
     resetDemo: () => void;
   };
 
@@ -18,12 +21,14 @@ export const useAppStore = create<AppState>()(
   immer((...a) => ({
     ...createConversationsSlice(...a),
     ...createLeadsSlice(...a),
+    ...createPatientsSlice(...a),
     resetDemo: () => {
       const [set] = a;
       set((state) => {
         state.conversations = SEED_CONVERSATIONS;
         state.leads = SEED_LEADS;
         state.activeConversationId = SEED_CONVERSATIONS[0]?.id ?? null;
+        state.inactivePatients = SEED_INACTIVE_PATIENTS;
       });
     },
   })),

@@ -6,12 +6,16 @@ import { ArrowLeft, Phone } from "lucide-react";
 import { useAppStore } from "@/lib/store/useAppStore";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
+import { PriorityBadge } from "@/components/ui/PriorityBadge";
+import { ClosingProbabilityRing } from "@/components/ui/ClosingProbabilityRing";
 import { MessageBubble } from "@/components/conversations/MessageBubble";
 import { TypingIndicator } from "@/components/conversations/TypingIndicator";
 import { QuickReplies } from "@/components/conversations/QuickReplies";
 import { MessageComposer } from "@/components/conversations/MessageComposer";
+import { AiSummary } from "@/components/conversations/AiSummary";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
 import { treatmentLabel } from "@/lib/data/treatments";
+import { computePriority, computeClosingProbability } from "@/lib/scoring/leadIntelligence";
 
 export function ChatThread({
   conversationId,
@@ -61,8 +65,16 @@ export function ChatThread({
             {conversation.patientPhone}
           </p>
         </div>
-        {lead && <Badge variant="accentLight">{treatmentLabel(lead.treatment)}</Badge>}
+        {lead && (
+          <div className="flex items-center gap-2">
+            <Badge variant="accentLight">{treatmentLabel(lead.treatment)}</Badge>
+            <ClosingProbabilityRing probability={computeClosingProbability(lead)} size={30} />
+            <PriorityBadge priority={computePriority(lead)} />
+          </div>
+        )}
       </div>
+
+      {lead && <AiSummary lead={lead} />}
 
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         <AnimatePresence initial={false}>

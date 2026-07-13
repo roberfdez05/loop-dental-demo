@@ -1,6 +1,6 @@
-import { MessagesSquare, Users } from "lucide-react";
+import { LayoutDashboard, MessagesSquare } from "lucide-react";
 
 export const NAV_ITEMS = [
+  { href: "/leads", label: "Panel", icon: LayoutDashboard },
   { href: "/conversaciones", label: "Conversaciones", icon: MessagesSquare },
-  { href: "/leads", label: "Leads", icon: Users },
 ] as const;

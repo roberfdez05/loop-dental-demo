@@ -32,3 +32,17 @@ export function treatmentLabel(id: TreatmentId): string {
   if (id === "otro") return "Consulta general";
   return TREATMENTS.find((t) => t.id === id)?.label ?? "Consulta general";
 }
+
+/** Valor medio de mercado por tratamiento, usado como valor potencial (€) del lead. */
+const AVERAGE_VALUE_BY_TREATMENT: Record<Exclude<TreatmentId, "otro">, number> = {
+  implantes: 3200,
+  ortodoncia_invisible: 2800,
+  blanqueamiento: 320,
+  carillas: 3800,
+  revision_general: 120,
+};
+
+export function estimateValueForTreatment(id: TreatmentId): number {
+  if (id === "otro") return 150;
+  return AVERAGE_VALUE_BY_TREATMENT[id];
+}

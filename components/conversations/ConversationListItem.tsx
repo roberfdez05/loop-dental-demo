@@ -1,7 +1,15 @@
 import { Avatar } from "@/components/ui/Avatar";
 import { RelativeTime } from "@/components/ui/RelativeTime";
+import { useAppStore } from "@/lib/store/useAppStore";
+import { computePriority } from "@/lib/scoring/leadIntelligence";
 import { cn } from "@/lib/utils/cn";
 import type { Conversation } from "@/lib/types/conversation";
+
+const PRIORITY_DOT = {
+  alta: "bg-zinc-900",
+  media: "bg-accent-400",
+  baja: "bg-zinc-200",
+};
 
 export function ConversationListItem({
   conversation,
@@ -12,6 +20,9 @@ export function ConversationListItem({
   active: boolean;
   onSelect: () => void;
 }) {
+  const lead = useAppStore((state) =>
+    state.leads.find((l) => l.conversationId === conversation.id),
+  );
   const lastMessage = conversation.messages[conversation.messages.length - 1];
 
   return (
@@ -25,9 +36,17 @@ export function ConversationListItem({
       <Avatar name={conversation.patientName} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-medium text-zinc-900">
-            {conversation.patientName}
-          </p>
+          <div className="flex min-w-0 items-center gap-1.5">
+            {lead && (
+              <span
+                className={cn("h-1.5 w-1.5 shrink-0 rounded-full", PRIORITY_DOT[computePriority(lead)])}
+                title={`Prioridad ${computePriority(lead)}`}
+              />
+            )}
+            <p className="truncate text-sm font-medium text-zinc-900">
+              {conversation.patientName}
+            </p>
+          </div>
           <span className="shrink-0 text-[11px] text-zinc-400">
             <RelativeTime iso={conversation.lastMessageAt} />
           </span>

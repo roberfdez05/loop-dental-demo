@@ -13,6 +13,7 @@ export const SEED_LEADS: Lead[] = [
     lastInteractionAt: minutesAgo(12),
     nextAction: "Confirmar asistencia 24h antes (jueves 17:30)",
     createdAt: minutesAgo(180),
+    estimatedValue: 3200,
   },
   {
     id: "lead-2",
@@ -24,6 +25,7 @@ export const SEED_LEADS: Lead[] = [
     lastInteractionAt: minutesAgo(90),
     nextAction: "Coordinar cita para escáner 3D gratuito",
     createdAt: minutesAgo(200),
+    estimatedValue: 2800,
   },
   {
     id: "lead-3",
@@ -35,6 +37,7 @@ export const SEED_LEADS: Lead[] = [
     lastInteractionAt: minutesAgo(300),
     nextAction: "Proponer franjas horarias disponibles esta semana",
     createdAt: minutesAgo(310),
+    estimatedValue: 320,
   },
   {
     id: "lead-4",
@@ -45,6 +48,7 @@ export const SEED_LEADS: Lead[] = [
     lastInteractionAt: minutesAgo(45),
     nextAction: "Enviar primer contacto",
     createdAt: minutesAgo(45),
+    estimatedValue: 3800,
   },
   {
     id: "lead-5",
@@ -55,6 +59,7 @@ export const SEED_LEADS: Lead[] = [
     lastInteractionAt: minutesAgo(24 * 60),
     nextAction: "Agendar revisión y diagnóstico esta semana",
     createdAt: minutesAgo(24 * 60 + 20),
+    estimatedValue: 120,
   },
   {
     id: "lead-6",
@@ -65,5 +70,6 @@ export const SEED_LEADS: Lead[] = [
     lastInteractionAt: minutesAgo(6 * 60),
     nextAction: "Llamar para agendar consulta de valoración",
     createdAt: minutesAgo(8 * 60),
+    estimatedValue: 2950,
   },
 ];

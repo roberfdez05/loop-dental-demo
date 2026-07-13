@@ -2,7 +2,7 @@ import type { StateCreator } from "zustand";
 import { toast } from "sonner";
 
 import type { Lead } from "@/lib/types/lead";
-import type { TreatmentId } from "@/lib/data/treatments";
+import { estimateValueForTreatment, type TreatmentId } from "@/lib/data/treatments";
 import { SEED_LEADS } from "@/lib/data/seed-leads";
 import { STATUS_NEXT_ACTION, nextStatus } from "@/lib/constants/status";
 import { createId } from "@/lib/utils/id";
@@ -43,6 +43,7 @@ export const createLeadsSlice: StateCreator<
         lead.treatment = treatment;
         lead.nextAction = nextAction;
         lead.lastInteractionAt = now;
+        lead.estimatedValue = estimateValueForTreatment(treatment);
         if (lead.status === "nuevo") lead.status = "contactado";
       });
       return get().leads.find((l) => l.id === existing.id)!;
@@ -59,6 +60,7 @@ export const createLeadsSlice: StateCreator<
       nextAction,
       createdAt: now,
       isNew: true,
+      estimatedValue: estimateValueForTreatment(treatment),
     };
 
     set((state) => {

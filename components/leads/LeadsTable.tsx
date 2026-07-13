@@ -8,9 +8,9 @@ import { useAppStore } from "@/lib/store/useAppStore";
 
 const COLUMNS = [
   "Nombre",
-  "Teléfono",
   "Tratamiento",
   "Estado",
+  "Prioridad / Cierre",
   "Última interacción",
   "Próxima acción",
   "",

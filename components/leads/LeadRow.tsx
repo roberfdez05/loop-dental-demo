@@ -6,18 +6,24 @@ import { Phone } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { StatusBadge } from "@/components/leads/StatusBadge";
 import { FollowUpButton } from "@/components/leads/FollowUpButton";
+import { PriorityBadge } from "@/components/ui/PriorityBadge";
+import { ClosingProbabilityRing } from "@/components/ui/ClosingProbabilityRing";
 import { useAppStore } from "@/lib/store/useAppStore";
 import { useClearFlagAfter } from "@/hooks/useClearFlagAfter";
 import { RelativeTime } from "@/components/ui/RelativeTime";
 import { treatmentLabel } from "@/lib/data/treatments";
+import { computePriority, computeClosingProbability } from "@/lib/scoring/leadIntelligence";
 import type { Lead } from "@/lib/types/lead";
 
-const GRID_COLS = "md:grid-cols-[1.6fr_1.1fr_1.2fr_1fr_1.1fr_1.6fr_auto]";
+const GRID_COLS = "md:grid-cols-[1.7fr_1.2fr_1fr_1.1fr_1.1fr_1.6fr_auto]";
 
 export function LeadRow({ lead }: { lead: Lead }) {
   const clearNewLeadFlag = useAppStore((state) => state.clearNewLeadFlag);
 
   useClearFlagAfter(!!lead.isNew, 3000, () => clearNewLeadFlag(lead.id));
+
+  const priority = computePriority(lead);
+  const closingProbability = computeClosingProbability(lead);
 
   return (
     <motion.div
@@ -36,12 +42,18 @@ export function LeadRow({ lead }: { lead: Lead }) {
       <div className={`hidden items-center gap-4 px-4 py-3.5 md:grid ${GRID_COLS}`}>
         <div className="flex min-w-0 items-center gap-2.5">
           <Avatar name={lead.name} className="h-8 w-8 text-[11px]" />
-          <span className="truncate text-sm font-medium text-zinc-900">{lead.name}</span>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-zinc-900">{lead.name}</p>
+            <p className="truncate text-xs text-zinc-400">{lead.phone}</p>
+          </div>
         </div>
-        <span className="truncate text-sm text-zinc-500">{lead.phone}</span>
         <span className="truncate text-sm text-zinc-600">{treatmentLabel(lead.treatment)}</span>
         <div>
           <StatusBadge status={lead.status} />
+        </div>
+        <div className="flex items-center gap-2">
+          <ClosingProbabilityRing probability={closingProbability} size={32} />
+          <PriorityBadge priority={priority} />
         </div>
         <span className="truncate text-sm text-zinc-500">
           <RelativeTime iso={lead.lastInteractionAt} />
@@ -63,12 +75,21 @@ export function LeadRow({ lead }: { lead: Lead }) {
               </p>
             </div>
           </div>
-          <StatusBadge status={lead.status} />
+          <div className="flex items-center gap-2">
+            <ClosingProbabilityRing probability={closingProbability} size={28} />
+            <StatusBadge status={lead.status} />
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div>
             <p className="text-zinc-400">Tratamiento</p>
             <p className="mt-0.5 text-zinc-700">{treatmentLabel(lead.treatment)}</p>
+          </div>
+          <div>
+            <p className="text-zinc-400">Prioridad</p>
+            <div className="mt-0.5">
+              <PriorityBadge priority={priority} />
+            </div>
           </div>
           <div>
             <p className="text-zinc-400">Última interacción</p>
