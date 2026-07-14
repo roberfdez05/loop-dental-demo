@@ -1,10 +1,11 @@
 import type { StateCreator } from "zustand";
 import { toast } from "sonner";
 
-import type { Lead } from "@/lib/types/lead";
+import type { Lead, LeadStatus } from "@/lib/types/lead";
+import type { LeadEvent, LeadEventType } from "@/lib/types/leadEvent";
 import { estimateValueForTreatment, type TreatmentId } from "@/lib/data/treatments";
 import { SEED_LEADS } from "@/lib/data/seed-leads";
-import { STATUS_NEXT_ACTION, nextStatus } from "@/lib/constants/status";
+import { STATUS_LABEL, STATUS_NEXT_ACTION, nextStatus } from "@/lib/constants/status";
 import { createId } from "@/lib/utils/id";
 import { delay } from "@/lib/utils/delay";
 import type { AppState } from "@/lib/store/useAppStore";
@@ -23,6 +24,28 @@ export interface LeadsSlice {
 }
 
 const FOLLOW_UP_DELAY_MS = 900;
+
+/** Tipo de evento más representativo al entrar en cada etapa del pipeline. */
+const EVENT_TYPE_BY_STATUS: Record<LeadStatus, LeadEventType> = {
+  nuevo: "primer_contacto",
+  contactado: "respuesta_ia",
+  interesado: "informacion_enviada",
+  cita_reservada: "cita_reservada",
+  diagnostico: "diagnostico",
+  presupuesto: "presupuesto_enviado",
+  seguimiento: "seguimiento",
+  aceptado: "aceptado",
+  paciente: "paciente",
+};
+
+function buildEvent(status: LeadStatus, timestamp: string): LeadEvent {
+  return {
+    id: createId("evt"),
+    type: EVENT_TYPE_BY_STATUS[status],
+    label: STATUS_LABEL[status],
+    timestamp,
+  };
+}
 
 export const createLeadsSlice: StateCreator<
   AppState,
@@ -45,6 +68,12 @@ export const createLeadsSlice: StateCreator<
         lead.lastInteractionAt = now;
         lead.estimatedValue = estimateValueForTreatment(treatment);
         if (lead.status === "nuevo") lead.status = "contactado";
+        lead.events.push({
+          id: createId("evt"),
+          type: "informacion_enviada",
+          label: "Información enviada por el asistente",
+          timestamp: now,
+        });
       });
       return get().leads.find((l) => l.id === existing.id)!;
     }
@@ -61,6 +90,10 @@ export const createLeadsSlice: StateCreator<
       createdAt: now,
       isNew: true,
       estimatedValue: estimateValueForTreatment(treatment),
+      events: [
+        { id: createId("evt"), type: "primer_contacto", label: "Primer contacto del paciente", timestamp: now },
+        { id: createId("evt"), type: "respuesta_ia", label: "Respuesta automática enviada", timestamp: now },
+      ],
     };
 
     set((state) => {
@@ -82,14 +115,16 @@ export const createLeadsSlice: StateCreator<
         const advanced = nextStatus(target.status);
         target.status = advanced;
         target.nextAction = STATUS_NEXT_ACTION[advanced];
-        target.lastInteractionAt = new Date().toISOString();
+        const now = new Date().toISOString();
+        target.lastInteractionAt = now;
+        target.events.push(buildEvent(advanced, now));
       });
     })();
 
     toast.promise(promise, {
-      loading: `Enviando seguimiento a ${lead.name}...`,
-      success: `Seguimiento enviado a ${lead.name}`,
-      error: "No se pudo enviar el seguimiento",
+      loading: `Actualizando a ${lead.name}...`,
+      success: `${lead.name} avanzó de etapa`,
+      error: "No se pudo actualizar el lead",
     });
 
     await promise;

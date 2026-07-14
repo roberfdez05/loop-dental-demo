@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils/cn";
 export function Sidebar() {
   const pathname = usePathname();
   const resetDemo = useAppStore((state) => state.resetDemo);
+  const isPlayingDemo = useAppStore((state) => state.isPlayingDemo);
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-zinc-200 bg-white/80 px-4 py-6 md:flex">
@@ -55,7 +56,9 @@ export function Sidebar() {
               description: "Se han restaurado los datos de ejemplo.",
             });
           }}
-          className="flex items-center gap-2 rounded-lg px-1 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-700"
+          disabled={isPlayingDemo}
+          title={isPlayingDemo ? "Detén el modo demo antes de reiniciar" : undefined}
+          className="flex items-center gap-2 rounded-lg px-1 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-zinc-400"
         >
           <RotateCcw className="h-3.5 w-3.5" />
           Reiniciar demo

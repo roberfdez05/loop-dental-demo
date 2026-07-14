@@ -6,24 +6,20 @@ import { Phone } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { StatusBadge } from "@/components/leads/StatusBadge";
 import { FollowUpButton } from "@/components/leads/FollowUpButton";
-import { PriorityBadge } from "@/components/ui/PriorityBadge";
-import { ClosingProbabilityRing } from "@/components/ui/ClosingProbabilityRing";
+import { PriorityFacets } from "@/components/leads/PriorityFacets";
 import { useAppStore } from "@/lib/store/useAppStore";
 import { useClearFlagAfter } from "@/hooks/useClearFlagAfter";
 import { RelativeTime } from "@/components/ui/RelativeTime";
 import { treatmentLabel } from "@/lib/data/treatments";
-import { computePriority, computeClosingProbability } from "@/lib/scoring/leadIntelligence";
 import type { Lead } from "@/lib/types/lead";
 
 const GRID_COLS = "md:grid-cols-[1.7fr_1.2fr_1fr_1.1fr_1.1fr_1.6fr_auto]";
 
 export function LeadRow({ lead }: { lead: Lead }) {
   const clearNewLeadFlag = useAppStore((state) => state.clearNewLeadFlag);
+  const openLeadDetail = useAppStore((state) => state.openLeadDetail);
 
   useClearFlagAfter(!!lead.isNew, 3000, () => clearNewLeadFlag(lead.id));
-
-  const priority = computePriority(lead);
-  const closingProbability = computeClosingProbability(lead);
 
   return (
     <motion.div
@@ -40,21 +36,21 @@ export function LeadRow({ lead }: { lead: Lead }) {
     >
       {/* Fila de escritorio */}
       <div className={`hidden items-center gap-4 px-4 py-3.5 md:grid ${GRID_COLS}`}>
-        <div className="flex min-w-0 items-center gap-2.5">
+        <button
+          onClick={() => openLeadDetail(lead.id)}
+          className="flex min-w-0 items-center gap-2.5 text-left"
+        >
           <Avatar name={lead.name} className="h-8 w-8 text-[11px]" />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-zinc-900">{lead.name}</p>
             <p className="truncate text-xs text-zinc-400">{lead.phone}</p>
           </div>
-        </div>
+        </button>
         <span className="truncate text-sm text-zinc-600">{treatmentLabel(lead.treatment)}</span>
         <div>
           <StatusBadge status={lead.status} />
         </div>
-        <div className="flex items-center gap-2">
-          <ClosingProbabilityRing probability={closingProbability} size={32} />
-          <PriorityBadge priority={priority} />
-        </div>
+        <PriorityFacets lead={lead} />
         <span className="truncate text-sm text-zinc-500">
           <RelativeTime iso={lead.lastInteractionAt} />
         </span>
@@ -65,7 +61,10 @@ export function LeadRow({ lead }: { lead: Lead }) {
       {/* Tarjeta móvil */}
       <div className="flex flex-col gap-3 p-4 md:hidden">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => openLeadDetail(lead.id)}
+            className="flex items-center gap-2.5 text-left"
+          >
             <Avatar name={lead.name} />
             <div>
               <p className="text-sm font-medium text-zinc-900">{lead.name}</p>
@@ -74,10 +73,9 @@ export function LeadRow({ lead }: { lead: Lead }) {
                 {lead.phone}
               </p>
             </div>
-          </div>
+          </button>
           <div className="flex items-center gap-2">
-            <ClosingProbabilityRing probability={closingProbability} size={28} />
-            <StatusBadge status={lead.status} />
+            <PriorityFacets lead={lead} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs">
@@ -86,9 +84,9 @@ export function LeadRow({ lead }: { lead: Lead }) {
             <p className="mt-0.5 text-zinc-700">{treatmentLabel(lead.treatment)}</p>
           </div>
           <div>
-            <p className="text-zinc-400">Prioridad</p>
+            <p className="text-zinc-400">Estado</p>
             <div className="mt-0.5">
-              <PriorityBadge priority={priority} />
+              <StatusBadge status={lead.status} />
             </div>
           </div>
           <div>

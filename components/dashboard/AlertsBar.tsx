@@ -4,6 +4,7 @@ import { AlertCircle, Coins, UserX } from "lucide-react";
 
 import { useAppStore } from "@/lib/store/useAppStore";
 import { computePriority } from "@/lib/scoring/leadIntelligence";
+import { isClosedStatus } from "@/lib/constants/status";
 import { formatCurrency } from "@/lib/utils/formatCurrency";
 
 export function AlertsBar() {
@@ -11,10 +12,10 @@ export function AlertsBar() {
   const inactivePatients = useAppStore((state) => state.inactivePatients);
 
   const waitingCount = leads.filter(
-    (l) => l.status !== "cita_agendada" && computePriority(l) === "alta",
+    (l) => !isClosedStatus(l.status) && computePriority(l) === "alta",
   ).length;
   const pipelineValue = leads
-    .filter((l) => l.status !== "cita_agendada")
+    .filter((l) => !isClosedStatus(l.status))
     .reduce((sum, l) => sum + l.estimatedValue, 0);
   const recoverableCount = inactivePatients.filter((p) => !p.campaignSent).length;
 

@@ -85,7 +85,7 @@ function CampaignButton({
   return (
     <Button variant={sent ? "outline" : "subtle"} size="sm" loading={loading} onClick={onClick} disabled={loading}>
       {!loading && (sent ? <Check className="h-3.5 w-3.5" /> : <Send className="h-3.5 w-3.5" />)}
-      {sent ? "Campaña enviada" : "Enviar campaña"}
+      {sent ? "Campaña enviada" : "Lanzar campaña"}
     </Button>
   );
 }

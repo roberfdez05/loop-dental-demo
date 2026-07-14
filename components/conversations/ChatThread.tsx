@@ -16,6 +16,7 @@ import { AiSummary } from "@/components/conversations/AiSummary";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
 import { treatmentLabel } from "@/lib/data/treatments";
 import { computePriority, computeClosingProbability } from "@/lib/scoring/leadIntelligence";
+import { isClosedStatus } from "@/lib/constants/status";
 
 export function ChatThread({
   conversationId,
@@ -68,7 +69,11 @@ export function ChatThread({
         {lead && (
           <div className="flex items-center gap-2">
             <Badge variant="accentLight">{treatmentLabel(lead.treatment)}</Badge>
-            <ClosingProbabilityRing probability={computeClosingProbability(lead)} size={30} />
+            <ClosingProbabilityRing
+              probability={computeClosingProbability(lead)}
+              won={isClosedStatus(lead.status)}
+              size={30}
+            />
             <PriorityBadge priority={computePriority(lead)} />
           </div>
         )}
